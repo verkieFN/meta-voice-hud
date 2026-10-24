@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#050b17">
+<title>Orbit • Voice Command HUD</title>
+<style>
+:root{color-scheme:dark;--bg:#050b17;--panel:#102033;--sub:#9ab2c5;--a:#69ffe1;--line:#294254}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#f4faff;font-family:system-ui,-apple-system,Segoe UI,sans-serif;min-height:100dvh}button,input,textarea{font:inherit}button{cursor:pointer;color:inherit;background:#142b40;border:1px solid #36556a;border-radius:14px;padding:13px 16px;font-weight:700;min-height:48px}button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--a);outline-offset:3px}button:active{transform:scale(.985)}button.primary{background:#63f0d3;color:#062322;border-color:#63f0d3}button:disabled{opacity:.35;cursor:default}.shell{width:min(100%,600px);margin:0 auto;padding:clamp(16px,4vw,28px);min-height:100dvh}.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px}.brand{font-weight:850;letter-spacing:.17em;color:var(--a);font-size:15px}.status{font-size:12px;color:var(--sub);text-align:right}.dots{width:7px;height:7px;background:#58e7b2;border-radius:50%;display:inline-block;margin-right:5px}.nav{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:20px}.nav button{padding:11px 6px;font-size:14px}.nav button[aria-current=page]{border-color:var(--a);background:#143a3c;color:#a9fff1}.eyebrow{font-size:12px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:var(--a);margin:0 0 8px}h1{font-size:clamp(27px,7vw,38px);line-height:1.12;letter-spacing:-.045em;margin:0 0 10px}p{color:#b5c8d8;line-height:1.5;margin:0 0 18px}.panel{background:linear-gradient(150deg,#102336,#0b1728);border:1px solid #254055;border-radius:22px;padding:18px;margin-bottom:14px}.metric{font-size:clamp(58px,17vw,100px);font-weight:850;letter-spacing:-.08em;line-height:1.15;text-align:center;color:white;font-variant-numeric:tabular-nums}.accent{color:var(--a)}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.caption{font-size:12px;color:var(--sub);line-height:1.5}.mini{font-size:13px;color:#c6e0eb}.kv{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid #254055}.kv:last-child{border:0}.readout{padding:16px;background:#091625;border:1px solid #2b4a58;border-radius:14px;color:var(--a);font-size:14px;font-weight:750}.row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.row>*{flex:1}.field{display:block;font-size:13px;font-weight:650;color:#b7cbd8;margin:14px 0 7px}input,textarea{background:#0a1929;border:1px solid #3c586a;border-radius:12px;color:#f7fdff;width:100%;padding:12px}textarea{resize:vertical;min-height:100px}.notes{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.55;min-height:80px;color:#eff9fb}.pill{border:1px solid #3d5a67;border-radius:99px;padding:7px 11px;color:var(--a);font-size:12px;display:inline-block}.hide{display:none!important}.spark{height:52px;position:relative;overflow:hidden;border-radius:14px;background:repeating-linear-gradient(90deg,#102b37 0 1px,transparent 1px 27px),#091725;display:flex;justify-content:center;align-items:center}.spark:before{content:"";position:absolute;width:200%;height:1px;background:linear-gradient(90deg,transparent,#70ffe6,transparent);transform:rotate(-12deg);opacity:.65}.spark span{z-index:1;color:#88fbe6;font-size:12px;font-weight:800;letter-spacing:.2em}.footer{padding:12px 0;font-size:12px;color:#8fa7ba}.space{height:8px}@media(max-width:380px){.shell{padding:13px}.panel{padding:14px}.nav button{font-size:12px}.metric{font-size:59px}}@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="shell">
+<header class="top"><div class="brand">◈ ORBIT / HUD</div><div class="status"><span class="dots"></span><span id="mcpstatus">Local controls ready</span></div></header>
+<nav class="nav" aria-label="Views"><button data-view="hud" aria-current="page">HUD</button><button data-view="timer">Timer</button><button data-view="notes">Notes</button></nav>
+<main>
+<section id="hud" class="view">
+<div class="eyebrow">01 / Heads-up display</div><h1>Systems online<span class="accent">.</span></h1><p>Your command center. Say “Hey Meta, activate HUD” when WebMCP is enabled, or select a view manually.</p>
+<div class="panel"><div class="spark"><span>● ACTIVE INTERFACE</span></div><div class="kv"><span class="mini">Local time</span><strong id="clock">--:--</strong></div><div class="kv"><span class="mini">Timer</span><strong id="hudtimer">Not running</strong></div><div class="kv"><span class="mini">Saved notes</span><strong id="notecount">0 characters</strong></div></div>
+<div class="grid"><button class="primary" id="start-hud-timer">Start 5 min timer</button><button id="hud-notes">Show notes</button></div>
+</section>
+<section id="timer" class="view hide">
+<div class="eyebrow">02 / Countdown</div><h1>Focus timer<span class="accent">.</span></h1><p>Set a duration, then keep it running while you switch screens.</p>
+<div class="panel"><div class="metric" id="bigtime" aria-live="off">05:00</div><div class="readout" id="timerstate" role="status">Ready • 5 minutes</div><label class="field" for="minutes">Duration in minutes (1–180)</label><input id="minutes" type="number" min="1" max="180" step="1" value="5" inputmode="numeric"/><div class="space"></div><div class="row"><button class="primary" id="timerstart">Start / Restart</button><button id="timerpause">Pause</button><button id="timerreset">Reset</button></div></div>
+</section>
+<section id="notes" class="view hide">
+<div class="eyebrow">03 / Quick notes</div><h1>Your notes<span class="accent">.</span></h1><p>Keep a simple note available on your glasses. Edits are saved in this browser.</p>
+<div class="panel"><div class="readout">Saved note</div><div class="space"></div><div class="notes" id="noteview">No notes yet.</div><label class="field" for="notetext">Edit note</label><textarea id="notetext" maxlength="5000" placeholder="Things to remember…"></textarea><div class="space"></div><div class="row"><button class="primary" id="save">Save note</button><button id="clear">Clear note</button></div></div>
+</section>
+</main>
+<div class="footer" id="feedback" role="status">Voice tools: checking device support…</div>
+</div>
+<script>
+(()=>{'use strict';
+const $=s=>document.querySelector(s), views=['hud','timer','notes'];
+let active='hud', endAt=null, remaining=300000, running=false, lastDuration=5, note='';
+try{note=localStorage.getItem('orbit-note')||''}catch(e){}
+function show(view){if(!views.includes(view))return {error:'Unknown view'};active=view;for(const v of views){$('#'+v).classList.toggle('hide',v!==view);document.querySelector(`[data-view="${v}"]`).setAttribute('aria-current',v===view?'page':'false')}refresh();return {success:true,view};}
+function pretty(ms){let s=Math.ceil(Math.max(0,ms)/1000);return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
+function durationMinutes(n){let m=Number(n);if(!Number.isInteger(m)||m<1||m>180)return null;return m}
+function startTimer(n){let m=durationMinutes(n);if(m===null)return {error:'Minutes must be a whole number from 1 to 180'};lastDuration=m;remaining=m*60000;endAt=Date.now()+remaining;running=true;$('#minutes').value=String(m);show('timer');refresh();return {success:true,minutes:m,message:'Countdown started'};}
+function pauseTimer(){if(running){remaining=Math.max(0,endAt-Date.now());running=false;endAt=null;refresh();return {success:true,paused:true}}if(remaining>0&&remaining<lastDuration*60000){endAt=Date.now()+remaining;running=true;refresh();return {success:true,resumed:true}}return {success:true,running:false};}
+function resetTimer(){running=false;endAt=null;remaining=lastDuration*60000;refresh();return {success:true,reset:true};}
+function refresh(){let left=running?Math.max(0,endAt-Date.now()):remaining;if(running&&left===0){running=false;endAt=null;remaining=0;$('#feedback').textContent='Timer complete!';}$('#bigtime').textContent=pretty(left);$('#hudtimer').textContent=running?pretty(left):left===0?'Complete':'Not running';$('#timerstate').textContent=running?'Running':left===0?'Finished':left<lastDuration*60000?'Paused':'Ready • '+lastDuration+' minutes';$('#timerpause').textContent=running?'Pause':'Resume';$('#clock').textContent=new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});$('#notecount').textContent=note.length+' characters';}
+function saveNote(s){if(typeof s!=='string'||s.length>5000)return {error:'Note must be 5000 characters or less'};note=s;try{localStorage.setItem('orbit-note',note)}catch(e){}$('#notetext').value=note;$('#noteview').textContent=note||'No notes yet.';refresh();return {success:true,characters:note.length};}
+for(const btn of document.querySelectorAll('[data-view]'))btn.addEventListener('click',()=>show(btn.dataset.view));
+$('#start-hud-timer').addEventListener('click',()=>startTimer(5));$('#hud-notes').addEventListener('click',()=>show('notes'));
+$('#timerstart').addEventListener('click',()=>{const r=startTimer($('#minutes').value);if(r.error)$('#feedback').textContent=r.error});$('#timerpause').addEventListener('click',pauseTimer);$('#timerreset').addEventListener('click',resetTimer);
+$('#save').addEventListener('click',()=>{saveNote($('#notetext').value);$('#feedback').textContent='Note saved'});$('#clear').addEventListener('click',()=>{saveNote('');$('#feedback').textContent='Note cleared'});
+$('#notetext').value=note;$('#noteview').textContent=note||'No notes yet.';
+function selectFocus(delta){const all=[...document.querySelectorAll('button:not(:disabled),input,textarea')].filter(el=>el.getClientRects().length);const i=all.indexOf(document.activeElement);const next=all[(i+delta+all.length)%all.length];if(next)next.focus()}
+document.addEventListener('keydown',e=>{if((e.key==='ArrowDown'||e.key==='ArrowUp')&&!['INPUT','TEXTAREA'].includes(document.activeElement.tagName)){e.preventDefault();selectFocus(e.key==='ArrowDown'?1:-1)}});
+async function registerVoice(){if(!document.modelContext||typeof document.modelContext.registerTool!=='function'){$('#mcpstatus').textContent='Manual mode';$('#feedback').textContent='WebMCP unavailable here. Buttons work; Meta AI voice tools require device support.';return}
+const empty={type:'object',properties:{},additionalProperties:false};
+const tools=[
+{name:'activate_hud',description:'Activate HUD, show the custom heads-up display, open my dashboard or show my heads-up display. Use when wearer says activate HUD.',inputSchema:empty,execute:async()=>show('hud')},
+{name:'start_timer',description:'Start a countdown timer in the glasses app. Use when wearer says start timer, start a five minute timer, or asks for a timer duration.',inputSchema:{type:'object',properties:{minutes:{type:'integer',minimum:1,maximum:180,description:'Countdown duration in minutes; use 5 when wearer does not specify a duration.'}},additionalProperties:false},execute:async({minutes=5})=>startTimer(minutes)},
+{name:'show_notes',description:'Open notes and show the saved note on the glasses display. Use when wearer says show notes, open my notes or read my note.',inputSchema:empty,execute:async()=>show('notes')}
+];
+let ok=0;for(const t of tools){try{await document.modelContext.registerTool(t);ok++}catch(e){console.warn('WebMCP registration failed:',t.name,e)}}$('#mcpstatus').textContent=ok===3?'Voice tools ready':'Manual mode';$('#feedback').textContent=ok===3?'3 WebMCP voice tools registered. Use “Hey Meta” while the app is open.':`Only ${ok} of 3 WebMCP tools registered; buttons remain usable.`;
+}
+setInterval(refresh,250);refresh();registerVoice();
+})();
+</script>
+</body>
+</html>
